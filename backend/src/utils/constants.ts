@@ -1,0 +1,12 @@
+
+export const ALL_FIELDS_REQUIRED : string = "All fields required !"
+export const INVALID_EMAIL : string = "Invalid email !"
+export const PASSWORD_MUST_6_LETTER : string = "Password must be 6 letters !"
+export const USER_REGISTERED_SUCCESSFULLY : string = "User registered successfully"
+export const EMAIL_AND_PASSWORD_REQUIRED : string = "Email and Password is required !"
+export const LOGIN_SUCCESSFULLY : string = "User login successfully"
+export const LOGOUT_SUCCESSFULLY : string = "logout successfully"
+export const COOKIE_TOKEN : string = "token"
+export const USER_ALREADY_EXISTS : string = "User already exists"
+export const USER_NOT_FOUND_WITH_EMAIL : string = "User not found with this email !"
+export const INVALID_PASSWORD : string = "Invalid password !"
