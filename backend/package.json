@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --watch src --ext ts,json --exec ts-node src/server.ts"
+    "dev": "nodemon --watch src --ext ts,json --exec ts-node src/server.ts",
+    "worker": "ts-node src/workers/user.worker.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +15,11 @@
     "@prisma/client": "^6.13.0",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.68.0",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.1",
     "prisma": "^6.13.0"
   },
   "devDependencies": {
