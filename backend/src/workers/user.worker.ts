@@ -15,6 +15,7 @@ const worker = new Worker(
       email: data.email,
       name: data.name,
       role: data.role,
+      isActive: data.isActive,
       createdAt: data.createdAt,
     });
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 import { PostgresUserRepository } from "../repositories/postgres/user.repository.pg";
-import { ALL_FIELDS_REQUIRED, COOKIE_TOKEN, EMAIL_AND_PASSWORD_REQUIRED, INVALID_EMAIL, LOGIN_SUCCESSFULLY, LOGOUT_SUCCESSFULLY, PASSWORD_MUST_6_LETTER, USER_REGISTERED_SUCCESSFULLY } from "../utils/constants";
+import { ALL_FIELDS_REQUIRED, COOKIE_TOKEN, EMAIL_AND_PASSWORD_REQUIRED, INVALID_EMAIL, LOGIN_SUCCESSFULLY, LOGOUT_SUCCESSFULLY, PASSWORD_MUST_6_LETTER, UNEXPECTED_TOKEN_ERROR, USER_NOT_FOUND_WITH_EMAIL, USER_REGISTERED_SUCCESSFULLY } from "../utils/constants";
 import { Status } from "../utils/enums";
 
 export class UserController {
@@ -101,6 +101,34 @@ export class UserController {
       } catch (error : any) {
           res.status(Status.SERVER_ERROR).json({success : false , message : error.message})
       }
+  }
+
+  profile = async(req : Request, res : Response) =>{
+    try {
+
+      let email = (req as any).userEmail
+
+      if(!email){
+        throw new Error(UNEXPECTED_TOKEN_ERROR);
+      }
+
+      let user = await this.userService.userData(email)
+
+      if(!user){
+        throw new Error(USER_NOT_FOUND_WITH_EMAIL);
+      }
+
+      res.status(Status.SUCCESS).json({
+        id : user.id, 
+        name : user.name, 
+        email : user.email,
+        role : user.role,
+        isActive : user.isActive
+      })
+      
+    } catch (error : any) {
+      res.status(Status.SERVER_ERROR).json({success : false , message : error.message})
+    }
   }
 
 }

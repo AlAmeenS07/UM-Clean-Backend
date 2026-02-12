@@ -2,7 +2,7 @@ import { IUserRepository } from "../repositories/interfaces/user.repository";
 import bcrypt from "bcryptjs";
 import { Role, User } from "@prisma/client";
 import jwt from "jsonwebtoken"
-import { INVALID_PASSWORD, USER_ALREADY_EXISTS, USER_NOT_FOUND_WITH_EMAIL } from "../utils/constants";
+import { INVALID_PASSWORD, USER_ACCOUNT_BLOCKED, USER_ALREADY_EXISTS, USER_NOT_FOUND_WITH_EMAIL } from "../utils/constants";
 import { userQueue } from "../queues/user.queue";
 
 export class UserService {
@@ -35,6 +35,7 @@ export class UserService {
         email: user.email,
         name: user.name,
         role: user.role,
+        isActive: user.isActive,
         createdAt: user.createdAt,
       },
       {
@@ -61,6 +62,10 @@ export class UserService {
       throw new Error(USER_NOT_FOUND_WITH_EMAIL);
     }
 
+    if (!user.isActive) {
+      throw new Error(USER_ACCOUNT_BLOCKED);
+    }
+
     let checkPassword = await bcrypt.compare(password, user.password)
 
     if (!checkPassword) {
@@ -71,5 +76,16 @@ export class UserService {
 
     return { user, token }
   }
+
+  async userData(email : string) : Promise<User>{
+    let user = await this.userRepo.findByEmail(email)
+
+    if(!user){
+      throw new Error(USER_NOT_FOUND_WITH_EMAIL);
+    }
+
+    return user
+  }
+
 
 }

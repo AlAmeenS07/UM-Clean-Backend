@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   email: {type : String},
   name: {type : String},
   role: {type : String},
+  isActive : {type : Boolean},
   createdAt: {type : Date},
 });
 
