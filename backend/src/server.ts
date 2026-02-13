@@ -3,6 +3,7 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
 import userRoutes from "./routes/user.routes"
+import adminRoutes from "./routes/admin.routes"
 dotenv.config()
 
 
@@ -16,6 +17,7 @@ app.get("/" , (req , res)=>{
 })
 
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/admin" , adminRoutes);
 
 
 

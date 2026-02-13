@@ -8,4 +8,5 @@ export interface IUserRepository {
     password: string;
     role: Role;
   }): Promise<User>;
+  findAllUsersExceptAdmin(): Promise<User[]>;
 }

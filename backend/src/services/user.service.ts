@@ -7,7 +7,7 @@ import { userQueue } from "../queues/user.queue";
 
 export class UserService {
 
-  constructor(private readonly userRepo: IUserRepository) { }
+  constructor(private userRepo: IUserRepository) { }
 
   async registerUser(data: { email: string, name: string, password: string, role?: Role }): Promise<User> {
 

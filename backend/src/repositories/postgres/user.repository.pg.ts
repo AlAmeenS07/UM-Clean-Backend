@@ -18,4 +18,16 @@ export class PostgresUserRepository implements IUserRepository {
     })
     return data
   }
+
+  async findAllUsersExceptAdmin(): Promise<User[]> {
+  return prisma.user.findMany({
+    where: {
+      role: {
+        not: "ADMIN",
+      },
+    },
+  });
+}
+
+
 }

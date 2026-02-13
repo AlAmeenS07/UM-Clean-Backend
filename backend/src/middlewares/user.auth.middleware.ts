@@ -1,13 +1,17 @@
 import { Request , Response , NextFunction } from "express";
 import { Status } from "../utils/enums";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { UNAUTHORIZED } from "../utils/constants";
+import { UNAUTHORIZED, UNEXPECTED_TOKEN_ERROR } from "../utils/constants";
 
 
 export const userAuthMiddleware = async(req : Request , res : Response , next : NextFunction)=>{
     try {
 
         let token = req.cookies?.token
+
+        if(!token){
+            throw new Error(UNEXPECTED_TOKEN_ERROR);
+        }
 
         let decode = jwt.verify(token , String(process.env.JWT_SECRET)) as JwtPayload
 
