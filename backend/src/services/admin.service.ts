@@ -3,6 +3,7 @@ import { IUserRepository } from "../repositories/interfaces/user.repository";
 import { INVALID_PASSWORD, USER_NOT_FOUND_WITH_EMAIL, USERS_NOT_FOUND } from "../utils/constants";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { userQueue } from "../queues/user.queue";
 
 export class AdminService {
     constructor(private userRepo: IUserRepository) { }
@@ -26,15 +27,41 @@ export class AdminService {
         return { user, token }
     }
 
-    async getUsersService() : Promise<User[]>{
+    async getUsersService(): Promise<User[]> {
 
         let users = await this.userRepo.findAllUsersExceptAdmin()
-        
-        if(!users){
+
+        if (!users) {
             throw new Error(USERS_NOT_FOUND);
         }
 
         return users
+    }
+
+    async updateUserStatus(userId: string, isActive: boolean) {
+
+        const updatedUser = await this.userRepo.updateUser(userId, { isActive })
+
+        await userQueue.add("update-user", {
+            id: updatedUser.id,
+            isActive: updatedUser.isActive,
+        }, {
+            attempts: 5,
+            backoff: { type: "exponential", delay: 2000 }
+        });
+
+        return updatedUser;
+
+    }
+
+    async userData(id : string) : Promise<User>{
+        let user = await this.userRepo.findById(id)
+
+        if(!user){
+            throw new Error(USERS_NOT_FOUND);
+        }
+        
+        return user
     }
 
 
