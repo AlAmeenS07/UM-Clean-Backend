@@ -6,11 +6,11 @@ import jwt from "jsonwebtoken"
 import { userQueue } from "../queues/user.queue";
 
 export class AdminService {
-    constructor(private userRepo: IUserRepository) { }
+    constructor(private _userRepo: IUserRepository) { }
 
     async loginAdmin(email: string, password: string): Promise<{ user: User, token: string }> {
 
-        let user = await this.userRepo.findByEmail(email)
+        let user = await this._userRepo.findByEmail(email)
 
         if (!user) {
             throw new Error(USER_NOT_FOUND_WITH_EMAIL);
@@ -29,7 +29,7 @@ export class AdminService {
 
     async getUsersService(): Promise<User[]> {
 
-        let users = await this.userRepo.findAllUsersExceptAdmin()
+        let users = await this._userRepo.findAllUsersExceptAdmin()
 
         if (!users) {
             throw new Error(USERS_NOT_FOUND);
@@ -40,7 +40,7 @@ export class AdminService {
 
     async updateUserStatus(userId: string, isActive: boolean) {
 
-        const updatedUser = await this.userRepo.updateUser(userId, { isActive })
+        const updatedUser = await this._userRepo.updateUser(userId, { isActive })
 
         await userQueue.add("update-user", {
             id: updatedUser.id,
@@ -55,7 +55,7 @@ export class AdminService {
     }
 
     async userData(id : string) : Promise<User>{
-        let user = await this.userRepo.findById(id)
+        let user = await this._userRepo.findById(id)
 
         if(!user){
             throw new Error(USERS_NOT_FOUND);

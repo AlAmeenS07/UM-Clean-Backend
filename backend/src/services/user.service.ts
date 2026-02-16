@@ -7,11 +7,11 @@ import { userQueue } from "../queues/user.queue";
 
 export class UserService {
 
-  constructor(private userRepo: IUserRepository) { }
+  constructor(private _userRepo: IUserRepository) { }
 
   async registerUser(data: { email: string, name: string, password: string, role?: Role }): Promise<User> {
 
-    const existingUser = await this.userRepo.findByEmail(data.email);
+    const existingUser = await this._userRepo.findByEmail(data.email);
 
     if (existingUser) {
       throw new Error(USER_ALREADY_EXISTS)
@@ -21,7 +21,7 @@ export class UserService {
 
     const role = "USER"
 
-    let user = await this.userRepo.create({
+    let user = await this._userRepo.create({
       email: data.email,
       name: data.name,
       password: hashedPassword,
@@ -56,7 +56,7 @@ export class UserService {
 
   async loginUser(email: string, password: string): Promise<{ user: User, token: string }> {
 
-    let user = await this.userRepo.findByEmail(email)
+    let user = await this._userRepo.findByEmail(email)
 
     if (!user) {
       throw new Error(USER_NOT_FOUND_WITH_EMAIL);
@@ -78,7 +78,7 @@ export class UserService {
   }
 
   async userData(email : string) : Promise<User>{
-    let user = await this.userRepo.findByEmail(email)
+    let user = await this._userRepo.findByEmail(email)
 
     if(!user){
       throw new Error(USER_NOT_FOUND_WITH_EMAIL);

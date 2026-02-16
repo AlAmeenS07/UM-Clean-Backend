@@ -7,11 +7,11 @@ import { Status } from "../utils/enums";
 
 export class AdminController {
 
-    private adminService: AdminService
+    private _adminService: AdminService
 
     constructor() {
         const userRepo = new PostgresUserRepository();
-        this.adminService = new AdminService(userRepo);
+        this._adminService = new AdminService(userRepo);
     }
 
     login = async (req: Request, res: Response) => {
@@ -27,7 +27,7 @@ export class AdminController {
                 throw new Error(INVALID_EMAIL);
             }
 
-            let { user, token } = await this.adminService.loginAdmin(email, password)
+            let { user, token } = await this._adminService.loginAdmin(email, password)
 
             res.cookie(COOKIE_TOKEN, token, {
                 httpOnly: true,
@@ -41,8 +41,10 @@ export class AdminController {
                 message: LOGIN_SUCCESSFULLY,
                 user: {
                     id: user.id,
+                    name: user.name,
                     email: user.email,
-                    role: user.role
+                    role: user.role,
+                    isActive: user.isActive
                 }
             })
 
@@ -54,7 +56,7 @@ export class AdminController {
     getUers = async (req: Request, res: Response) => {
         try {
 
-            let users = await this.adminService.getUsersService()
+            let users = await this._adminService.getUsersService()
 
             if (!users) {
                 throw new Error(USERS_NOT_FOUND);
@@ -76,16 +78,16 @@ export class AdminController {
 
             let userId = req.params.id as string
 
-            let user = await this.adminService.userData(userId)
+            let user = await this._adminService.userData(userId)
 
             if (!user) {
                 throw new Error(USERS_NOT_FOUND);
             }
 
             res.status(Status.SUCCESS).json({
-                success : true,
-                message : USERS_FETCH_SUCCESSFULLY,
-                user : {
+                success: true,
+                message: USERS_FETCH_SUCCESSFULLY,
+                user: {
                     id: user.id,
                     name: user.name,
                     email: user.email,
@@ -106,12 +108,18 @@ export class AdminController {
             const userId = req.params.id as string
             const { isActive } = req.body
 
-            let user = await this.adminService.updateUserStatus(userId, isActive)
+            let user = await this._adminService.updateUserStatus(userId, isActive)
 
             res.status(Status.SUCCESS).json({
-                success: false,
+                success: true,
                 message: USER_STATUS_UPDATED,
-                user
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    isActive: user.isActive
+                }
             })
 
         } catch (error: any) {
